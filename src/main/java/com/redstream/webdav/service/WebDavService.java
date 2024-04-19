@@ -35,7 +35,6 @@ public class WebDavService {
 
     public String uploadFile(String uri, MultipartFile file) throws IOException {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
-            // 增加文件名
             uri += "/" + file.getOriginalFilename();
             HttpPut put = new HttpPut(uri);
             put.setHeader("Authorization", AuthHelper.getBasicAuthHeader(username, password));
@@ -49,8 +48,6 @@ public class WebDavService {
 
     public byte[] downloadFile(String uri) throws IOException {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
-            // 增加文件名
-            uri += "/" + "华为高斯国产化改造手册.md";
             HttpGet get = new HttpGet(uri);
             get.setHeader("Authorization", AuthHelper.getBasicAuthHeader(username, password));
             try (CloseableHttpResponse response = client.execute(get)) {
