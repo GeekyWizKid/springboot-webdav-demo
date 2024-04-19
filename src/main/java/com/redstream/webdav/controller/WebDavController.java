@@ -30,4 +30,9 @@ public class WebDavController {
     public byte[] download(@RequestParam String uri) throws IOException {
         return webDavService.downloadFile(uri);
     }
+
+    @DeleteMapping("/delete")
+    public String delete(@RequestParam String uri) throws IOException {
+        return webDavService.deleteFile(uri);
+    }
 }

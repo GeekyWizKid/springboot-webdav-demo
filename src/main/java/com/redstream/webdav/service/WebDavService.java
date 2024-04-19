@@ -2,19 +2,20 @@ package com.redstream.webdav.service;
 
 import com.redstream.webdav.helper.AuthHelper;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class WebDavService {
@@ -60,6 +61,25 @@ public class WebDavService {
         }
     }
 
+
+    public String deleteFile(String uri) throws IOException {
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpDelete delete = new HttpDelete(uri);
+            delete.setHeader("Authorization", AuthHelper.getBasicAuthHeader(username, password));
+
+            try (CloseableHttpResponse response = client.execute(delete)) {
+                // You can handle different HTTP status codes here
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == 204) { // HTTP 204 No Content means the deletion was successful
+                    return "File deleted successfully";
+                } else {
+                    // If deletion is not successful, return the HTTP status line for debugging
+                    return "Failed to delete file: " + response.getStatusLine().toString();
+                }
+            }
+        }
+    }
+
     /**
      * 将MultipartFile转换为File对象。
      *
@@ -84,4 +104,5 @@ public class WebDavService {
 
         return file;
     }
+
 }
